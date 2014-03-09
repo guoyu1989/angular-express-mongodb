@@ -1,60 +1,62 @@
 'use strict';
 
 /* Controllers */
+var postControllers = angular.module('postApp.controllers', []);
 
-function IndexCtrl($scope, $http) {
-  $http.get('/api/posts').
-    success(function(data, status, headers, config) {
-      $scope.posts = data.posts;
+postControllers.controller(
+    'IndexCtrl',
+    ['$scope', 'PostServices',
+    function($scope, PostServices) {
+  PostServices.findAllPosts().$promise
+    .then(function(result) {
+      $scope.posts = result.posts;
     });
-}
+}]);
 
-function AddPostCtrl($scope, $http, $location) {
-  $scope.form = {};
-  $scope.submitPost = function () {
-    $http.post('/api/post', $scope.form).
-      success(function(data) {
-        $location.path('/');
-      });
+postControllers.controller(
+    'AddPostCtrl',
+    ['$scope', 'PostServices', '$location',
+    function($scope, PostServices, $location) {
+  $scope.addPost = function() {
+    PostServices.insertPost({}, $scope.form);
+    $location.path('/');
   };
-}
+}]);
 
-function ReadPostCtrl($scope, $http, $routeParams) {
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
+postControllers.controller(
+    'ReadPostCtrl',
+    ['$scope', 'PostServices', '$routeParams',
+    function($scope, PostServices, $routeParams) {
+  PostServices.get({blogId: $routeParams.id, path: 'post'}).$promise
+    .then(function(result) {
+      $scope.post = result.post;
     });
-}
+}]);
 
-function EditPostCtrl($scope, $http, $location, $routeParams) {
-  $scope.form = {};
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.form = data.post;
+postControllers.controller(
+    'EditPostCtrl',
+    ['$scope', 'PostServices', '$routeParams', '$location',
+    function($scope, PostServices, $routeParams, $location) {
+  PostServices.findPost({blogId: $routeParams.id}).$promise
+    .then(function(result) {
+      $scope.post = result.post;
     });
-
-  $scope.editPost = function () {
-    $http.put('/api/post/' + $routeParams.id, $scope.form).
-      success(function(data) {
-        $location.url('/readPost/' + $routeParams.id);
-      });
+  $scope.editPost = function() {
+    PostServices.editPost({blogId: $routeParams.id}, $scope.post);
+    $location.url('/readPost/' + $routeParams.id);
   };
-}
+}]);
 
-function DeletePostCtrl($scope, $http, $location, $routeParams) {
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
+postControllers.controller(
+    'DeletePostCtrl',
+    ['$scope', 'PostServices', '$routeParams', '$location',
+    function($scope, PostServices, $routeParams, $location) {
+  PostServices.findPost({blogId: $routeParams.id}).$promise
+    .then(function(result) {
+      $scope.post = result.post;
     });
-
-  $scope.deletePost = function () {
-    $http.delete('/api/post/' + $routeParams.id).
-      success(function(data) {
-        $location.url('/');
-      });
-  };
-
-  $scope.home = function () {
+  $scope.deletePost = function() {
+    PostServices.deletePost({blogId: $routeParams.id});
     $location.url('/');
   };
-}
+}]);

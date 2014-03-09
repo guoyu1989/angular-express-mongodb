@@ -4,8 +4,7 @@
  */
 
 var express = require('express'),
-  routes = require('./routes'),
-  api = require('./routes/api');
+  routes = require('./routes');
 
 var app = module.exports = express.createServer();
 
@@ -39,12 +38,7 @@ app.get('/partials/:name', routes.partials);
 
 // JSON API
 
-app.get('/api/posts', api.posts);
-
-app.get('/api/post/:id', api.post);
-app.post('/api/post', api.addPost);
-app.put('/api/post/:id', api.editPost);
-app.delete('/api/post/:id', api.deletePost);
+require('./routes/db_api')(app);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

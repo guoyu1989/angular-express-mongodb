@@ -1,0 +1,16 @@
+{
+  "name": "angular-express-blog",
+  "version": "0.0.1",
+  "homepage": "null",
+  "authors": [
+    "Yu Guo <nyuguoyu@gmail.com>"
+  ],
+  "description": "Angular experess blog test",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "~1.2.14",
+    "angular-route": "~1.2.14",
+    "angular-resource": "~1.2.14"
+  }
+}
